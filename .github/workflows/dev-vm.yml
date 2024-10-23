@@ -1,0 +1,23 @@
+name: Deploy to Azure VM
+on:
+  push:
+    branches:
+      - dev
+jobs:
+  deploys:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Deployment
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ingsis-team
+          key: ${{ secrets.DEV-VM-PRIVATE-KEY }} // Ver en Azure como es
+          script: |
+            cd infra-microservices
+            sudo docker-compose -f docker-compose.dev.yml stop
+            sudo git pull
+            sudo docker-compose -f docker-compose.dev.yml up -d --build
