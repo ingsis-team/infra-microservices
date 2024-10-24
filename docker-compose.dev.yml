@@ -31,7 +31,6 @@ services:
     volumes:
       - snippet_volume:/var/lib/postgresql/data
 
-
   printscript-api:
     container_name: 'printscript-api'
     image: 'ghcr.io/ingsis-team/printscript-service:latest'
@@ -48,11 +47,9 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
 
-
   redis:
     container_name: 'redis'
     image: redis:6-alpine
-
 
   permission-api:
     container_name: 'permission-api'
@@ -67,7 +64,6 @@ services:
       depends_on:
         - permission_db
 
-
   permission_db:
       image: postgres:alpine
       environment:
@@ -76,7 +72,6 @@ services:
         - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
       volumes:
         - permission_volume:/var/lib/postgresql/data
-
 
   proxy:
     container_name: 'proxy-dev'
@@ -120,8 +115,6 @@ services:
     environment:
       AZURE_HOST: "http://azurite"
 
-
-
   azurite-manager:
     image: mcr.microsoft.com/azure-storage/azurite
     container_name: azurite
@@ -139,4 +132,3 @@ services:
     permission_volume:
     printsript_volume:
     blob:
-
