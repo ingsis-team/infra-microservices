@@ -1,0 +1,134 @@
+services:
+  printscript-ui:
+    container_name: 'printscript-ui'
+    image: 'ghcr.io/ingsis-team/printscript-ui:latest'
+    pull_policy: always
+    expose:
+      - "80"
+
+  snippet-api:
+    container_name: 'snippet-api'
+    image: 'ghcr.io/ingsis-team/snippet-service:latest'
+    pull_policy: always
+    expose:
+      - "8080"
+    depends_on:
+        - snippet-db
+    environment:
+        DB_HOST: postgres
+        DB_PORT: 5432
+        DB_NAME: postgres
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+
+  snippet-db:
+    container_name: 'snippet-db'
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - snippet_volume:/var/lib/postgresql/data
+
+  printscript-api:
+    container_name: 'printscript-api'
+    image: 'ghcr.io/ingsis-team/printscript-service:latest'
+    pull_policy: always
+    depends_on:
+        - printscript-db
+        - redis
+
+  printscript-db:
+    container_name: 'printscript-db'
+    image: postgres:12
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+  redis:
+    container_name: 'redis'
+    image: redis:6-alpine
+
+  permission-api:
+    container_name: 'permission-api'
+    image: 'ghcr.io/ingsis-team/permission-service:latest'
+    pull_policy: always
+    environment:
+      DB_HOST: permission_db
+      DB_PORT: 5432
+      DB_NAME: printscript-permission
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      depends_on:
+        - permission_db
+
+  permission_db:
+      image: postgres:alpine
+      environment:
+        - POSTGRES_DB= printscript-permission
+        - POSTGRES_USER= ${POSTGRES_USER}
+        - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
+      volumes:
+        - permission_volume:/var/lib/postgresql/data
+
+  proxy:
+    container_name: 'proxy-dev'
+    image: nginx:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./dev/:/etc/nginx/dev/:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+
+    depends_on:
+      - duckdns
+      - certbot
+      - printscript-ui
+      - snippet-api
+      - printscript-api
+      - permission-api
+      - printscript-db
+      - snippet-db
+
+  duckdns:
+    image: lsrc.io/linuxserver/duckdns:version-d63af1c1
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS= ingsis-team
+      - TOKEN= $ {DUCKDNS_TOKEN}
+    restart: unless-stopped
+
+  certbot:
+    container_name: "certbot"
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+
+  api-manager:
+    container_name: "asset-service"
+    image: "ghcr.io/ingsis-team/asset-service:latest"
+    environment:
+      AZURE_HOST: "http://azurite"
+
+  azurite-manager:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    hostname: azurite
+    restart: always
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - blob:/workspace
+
+  volumes:
+    snippet_volume:
+    permission_volume:
+    printsript_volume:
+    blob:
