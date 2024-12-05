@@ -1,14 +1,14 @@
 services:
   printscript-ui:
     container_name: 'printscript-ui'
-    image: 'ghcr.io/ingsis-team/printscript-ui:latest'
+    image: 'ghcr.io/ingsis-team/ingsis-printscript-ui:latest'
     pull_policy: always
     expose:
       - "80"
 
   snippet-api:
     container_name: 'snippet-api'
-    image: 'ghcr.io/ingsis-team/snippet-service:latest'
+    image: 'ghcr.io/ingsis-team/ingsis-snippet-service:latest'
     pull_policy: always
     expose:
       - "8080"
@@ -33,7 +33,7 @@ services:
 
   printscript-api:
     container_name: 'printscript-api'
-    image: 'ghcr.io/ingsis-team/printscript-service:latest'
+    image: 'ghcr.io/ingsis-team/ingsis-printscript-service:latest'
     pull_policy: always
     depends_on:
       - printscript-db
@@ -53,7 +53,7 @@ services:
 
   permission-api:
     container_name: 'permission-api'
-    image: 'ghcr.io/ingsis-team/permission-service:latest'
+    image: 'ghcr.io/ingsis-team/ingsis-permission-service:latest'
     pull_policy: always
     depends_on:
       - permission_db
@@ -92,11 +92,11 @@ services:
       - snippet-db
       - permission_db
 
-  api-manager:
-    container_name: "asset-service"
-    image: "ghcr.io/ingsis-team/asset-service:latest"
-    environment:
-      AZURE_HOST: "http://azurite"
+#  api-manager:
+#    container_name: "asset-service"
+#    image: "ghcr.io/ingsis-team/asset-service:latest"
+#    environment:
+#      AZURE_HOST: "http://azurite"
 
   azurite-manager:
     image: mcr.microsoft.com/azure-storage/azurite
