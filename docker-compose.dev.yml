@@ -76,13 +76,11 @@ services:
   proxy:
     container_name: 'proxy-dev'
     image: nginx:latest
-    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
-      - ./dev/:/etc/nginx/dev/:ro
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./dev/dev.conf:/etc/nginx/conf.d/dev.conf:ro
+
     depends_on:
       - printscript-ui
       - snippet-api
