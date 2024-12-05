@@ -13,13 +13,13 @@ services:
     expose:
       - "8080"
     depends_on:
-        - snippet-db
+      - snippet-db
     environment:
-        DB_HOST: postgres
-        DB_PORT: 5432
-        DB_NAME: postgres
-        DB_USER: postgres
-        DB_PASSWORD: postgres
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: postgres
+      DB_USER: postgres
+      DB_PASSWORD: postgres
 
   snippet-db:
     container_name: 'snippet-db'
@@ -36,8 +36,8 @@ services:
     image: 'ghcr.io/ingsis-team/printscript-service:latest'
     pull_policy: always
     depends_on:
-        - printscript-db
-        - redis
+      - printscript-db
+      - redis
 
   printscript-db:
     container_name: 'printscript-db'
@@ -55,23 +55,23 @@ services:
     container_name: 'permission-api'
     image: 'ghcr.io/ingsis-team/permission-service:latest'
     pull_policy: always
+    depends_on:
+      - permission_db
     environment:
       DB_HOST: permission_db
       DB_PORT: 5432
       DB_NAME: printscript-permission
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      depends_on:
-        - permission_db
 
   permission_db:
-      image: postgres:alpine
-      environment:
-        - POSTGRES_DB= printscript-permission
-        - POSTGRES_USER= ${POSTGRES_USER}
-        - POSTGRES_PASSWORD= ${POSTGRES_PASSWORD}
-      volumes:
-        - permission_volume:/var/lib/postgresql/data
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: printscript-permission
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - permission_volume:/var/lib/postgresql/data
 
   proxy:
     container_name: 'proxy-dev'
@@ -83,31 +83,14 @@ services:
       - ./dev/:/etc/nginx/dev/:ro
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-
     depends_on:
-      - duckdns
-      - certbot
       - printscript-ui
       - snippet-api
       - printscript-api
       - permission-api
       - printscript-db
       - snippet-db
-
-  duckdns:
-    image: lsrc.io/linuxserver/duckdns:version-d63af1c1
-    container_name: duckdns
-    environment:
-      - SUBDOMAINS= ingsis-team
-      - TOKEN= $ {DUCKDNS_TOKEN}
-    restart: unless-stopped
-
-  certbot:
-    container_name: "certbot"
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - permission_db
 
   api-manager:
     container_name: "asset-service"
@@ -127,8 +110,8 @@ services:
     volumes:
       - blob:/workspace
 
-  volumes:
-    snippet_volume:
-    permission_volume:
-    printsript_volume:
-    blob:
+volumes:
+  snippet_volume:
+  permission_volume:
+  printsript_volume:
+  blob:
