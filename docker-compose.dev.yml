@@ -90,11 +90,11 @@ services:
       - snippet-db
       - permission_db
 
-#  api-manager:
-#    container_name: "asset-service"
-#    image: "ghcr.io/ingsis-team/asset-service:latest"
-#    environment:
-#      AZURE_HOST: "http://azurite"
+  api-manager:
+    container_name: "asset-service"
+    image: "ghcr.io/austral-ingsis/snippet-asset-service:latest"
+    environment:
+      AZURE_HOST: "http://azurite"
 
   azurite-manager:
     image: mcr.microsoft.com/azure-storage/azurite
