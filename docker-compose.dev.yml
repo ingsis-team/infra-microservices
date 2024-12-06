@@ -78,8 +78,9 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
+      - "443:443"
     volumes:
-      - ./dev/dev.conf:/etc/nginx/conf.d/dev.conf:ro
+      - ./conf.d/:/etc/nginx/conf.d/:ro
 
     depends_on:
       - printscript-ui
