@@ -78,9 +78,9 @@ services:
     image: nginx:latest
     ports:
       - "80:80"
-      - "443:443"
     volumes:
-      - ./conf.d/:/etc/nginx/conf.d/:ro
+      - ./static/:/usr/share/nginx/html:ro
+      - ./conf.d:/etc/nginx/conf.d:ro
 
     depends_on:
       - printscript-ui
