@@ -1,3 +1,5 @@
+version: '3.7'
+
 services:
   printscript-ui:
     container_name: 'printscript-ui'
@@ -74,22 +76,41 @@ services:
       - permission_volume:/var/lib/postgresql/data
 
   proxy:
-    container_name: 'proxy-dev'
+    container_name: 'reverse-proxy-dev'
     image: nginx:latest
+    restart: unless-stopped
     ports:
-      - "80:80"
+      - 80:80
+      - 443:443
     volumes:
-      - ./static/:/usr/share/nginx/html:ro
-      - ./conf.d:/etc/nginx/conf.d:ro
-
+      - ./conf.d/:/etc/nginx/conf.d/:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     depends_on:
+      - duckdns
       - printscript-ui
-      - snippet-api
       - printscript-api
+      - snippet-api
       - permission-api
       - printscript-db
-      - snippet-db
       - permission_db
+      - snippet-db
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:version-d63af1c1
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=ingsis-team
+      - TOKEN=${DUCKDNS_TOKEN}
+    restart: unless-stopped
+
+  certbot:
+    container_name: "certbot"
+    image: certbot/certbot:latest
+    volumes:
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    command: certonly --webroot -w /var/www/certbot --email tomas.alcazar@ing.austral.edu.ar -d ingsis-team.duckdns.org --agree-tos --non-interactive
 
   api-manager:
     container_name: "asset-service"
