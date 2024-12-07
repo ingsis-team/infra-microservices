@@ -110,7 +110,7 @@ services:
     volumes:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --email tomas.alcazar@ing.austral.edu.ar -d ingsis-team.duckdns.org --agree-tos --non-interactive
+    command: certonly --webroot -w /var/www/certbot --force-renewal --email tomas.alcazar@ing.austral.edu.ar -d ingsis-team.duckdns.org --agree-tos
 
   api-manager:
     container_name: "asset-service"
