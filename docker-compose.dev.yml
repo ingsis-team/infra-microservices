@@ -84,8 +84,9 @@ services:
       - 443:443
     volumes:
       - ./conf.d/:/etc/nginx/conf.d/:ro
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
+      - ./certs:/etc/nginx/certs:ro
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
     depends_on:
       - duckdns
       - printscript-ui
@@ -104,13 +105,13 @@ services:
       - TOKEN=${DUCKDNS_TOKEN}
     restart: unless-stopped
 
-  certbot:
-    container_name: "certbot"
-    image: certbot/certbot:latest
-    volumes:
-      - ./certbot/conf:/etc/letsencrypt
-      - ./certbot/www:/var/www/certbot
-    command: certonly --webroot -w /var/www/certbot --force-renewal --email tomas.alcazar@ing.austral.edu.ar -d ingsis.duckdns.org --agree-tos
+#  certbot:
+#    container_name: "certbot"
+#    image: certbot/certbot:latest
+#    volumes:
+#      - ./certbot/conf:/etc/letsencrypt
+#      - ./certbot/www:/var/www/certbot
+#    command: certonly --webroot -w /var/www/certbot --force-renewal --email tomas.alcazar@ing.austral.edu.ar -d ingsis.duckdns.org --agree-tos
 
   api-manager:
     container_name: "asset-service"
