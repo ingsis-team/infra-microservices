@@ -33,13 +33,13 @@ services:
     volumes:
       - snippet_volume:/var/lib/postgresql/data
 
-  printscript-api:
-    container_name: 'printscript-api'
-    image: 'ghcr.io/ingsis-team/ingsis-printscript-service:latest'
-    pull_policy: always
-    depends_on:
-      - printscript-db
-      - redis
+#  printscript-api:
+#    container_name: 'printscript-api'
+#    image: 'ghcr.io/ingsis-team/ingsis-printscript-service:latest'
+#    pull_policy: always
+#    depends_on:
+#      - printscript-db
+#      - redis
 
   printscript-db:
     container_name: 'printscript-db'
@@ -53,18 +53,18 @@ services:
     container_name: 'redis'
     image: redis:6-alpine
 
-  permission-api:
-    container_name: 'permission-api'
-    image: 'ghcr.io/ingsis-team/ingsis-permission-service:latest'
-    pull_policy: always
-    depends_on:
-      - permission_db
-    environment:
-      DB_HOST: permission_db
-      DB_PORT: 5432
-      DB_NAME: printscript-permission
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+#  permission-api:
+#    container_name: 'permission-api'
+#    image: 'ghcr.io/ingsis-team/ingsis-permission-service:latest'
+#    pull_policy: always
+#    depends_on:
+#      - permission_db
+#    environment:
+#      DB_HOST: permission_db
+#      DB_PORT: 5432
+#      DB_NAME: printscript-permission
+#      DB_USER: ${POSTGRES_USER}
+#      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   permission_db:
     image: postgres:alpine
