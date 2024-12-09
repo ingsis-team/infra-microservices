@@ -89,9 +89,9 @@ services:
     depends_on:
       - duckdns
       - printscript-ui
-      - printscript-api
+#      - printscript-api
       - snippet-api
-      - permission-api
+#      - permission-api
       - printscript-db
       - permission_db
       - snippet-db
