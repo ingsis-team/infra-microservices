@@ -10,7 +10,7 @@ services:
 
   snippet-api:
     container_name: 'snippet-api'
-    image: 'ghcr.io/v2/ingsis-team/ingsis-snippet-service/manifests/latest'
+    image: 'ghcr.io/ingsis-team/ingsis-snippet-service:latest'
     pull_policy: always
     expose:
       - "8080"
