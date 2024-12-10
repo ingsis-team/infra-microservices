@@ -17,7 +17,7 @@ services:
     depends_on:
       - snippet-db
     environment:
-      DB_HOST: postgres
+      DB_HOST: snippet-db
       DB_PORT: 5432
       DB_NAME: postgres
       DB_USER: postgres
