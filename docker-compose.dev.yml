@@ -101,7 +101,7 @@ services:
     image: lscr.io/linuxserver/duckdns:version-d63af1c1
     container_name: duckdns
     environment:
-      - SUBDOMAINS=ingsis-team
+      - SUBDOMAINS=ingsis
       - TOKEN=${DUCKDNS_TOKEN}
     restart: unless-stopped
 
