@@ -17,59 +17,52 @@ services:
     depends_on:
       - snippet-db
     environment:
-      DB_HOST: postgres
-      DB_PORT: 5432
-      DB_NAME: postgres
-      DB_USER: postgres
-      DB_PASSWORD: postgres
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   snippet-db:
     container_name: 'snippet-db'
     image: postgres:alpine
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - snippet_volume:/var/lib/postgresql/data
-
-#  printscript-api:
-#    container_name: 'printscript-api'
-#    image: 'ghcr.io/ingsis-team/ingsis-printscript-service:latest'
-#    pull_policy: always
-#    depends_on:
-#      - printscript-db
-#      - redis
 
   printscript-db:
     container_name: 'printscript-db'
     image: postgres:12
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
   redis:
     container_name: 'redis'
     image: redis:6-alpine
 
-#  permission-api:
-#    container_name: 'permission-api'
-#    image: 'ghcr.io/ingsis-team/ingsis-permission-service:latest'
-#    pull_policy: always
-#    depends_on:
-#      - permission_db
-#    environment:
-#      DB_HOST: permission_db
-#      DB_PORT: 5432
-#      DB_NAME: printscript-permission
-#      DB_USER: ${POSTGRES_USER}
-#      DB_PASSWORD: ${POSTGRES_PASSWORD}
+  permission-api:
+    container_name: 'permission-api'
+    image: 'ghcr.io/ingsis-team/ingsis-permission-service:latest'
+    pull_policy: always
+    depends_on:
+      - permission_db
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
 
   permission_db:
+    container_name: 'permission_db'
     image: postgres:alpine
     environment:
-      POSTGRES_DB: printscript-permission
+      POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
@@ -85,14 +78,10 @@ services:
     volumes:
       - ./conf.d/:/etc/nginx/conf.d/:ro
       - ./certs:/etc/nginx/certs:ro
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
     depends_on:
       - duckdns
       - printscript-ui
-#      - printscript-api
       - snippet-api
-#      - permission-api
       - printscript-db
       - permission_db
       - snippet-db
@@ -104,14 +93,6 @@ services:
       - SUBDOMAINS=ingsis
       - TOKEN=${DUCKDNS_TOKEN}
     restart: unless-stopped
-
-#  certbot:
-#    container_name: "certbot"
-#    image: certbot/certbot:latest
-#    volumes:
-#      - ./certbot/conf:/etc/letsencrypt
-#      - ./certbot/www:/var/www/certbot
-#    command: certonly --webroot -w /var/www/certbot --force-renewal --email tomas.alcazar@ing.austral.edu.ar -d ingsis.duckdns.org --agree-tos
 
   api-manager:
     container_name: "asset-service"
@@ -125,9 +106,9 @@ services:
     hostname: azurite
     restart: always
     ports:
-      - "10000:10000"
-      - "10001:10001"
-      - "10002:10002"
+      - "10003:10000"  # Changed port
+      - "10004:10001"  # Changed port
+      - "10005:10002"  # Changed port
     volumes:
       - blob:/workspace
 
