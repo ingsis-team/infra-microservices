@@ -65,7 +65,7 @@ services:
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       DB_NAME: ${POSTGRES_DB}
       DB_HOST: permission-db
-      DB_PORT: 5431
+      DB_PORT: 5432
 
 
   permission-db:
