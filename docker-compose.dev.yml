@@ -136,3 +136,4 @@ services:
 volumes:
   snippet_volume:
   permission_volume:
+  blob:
