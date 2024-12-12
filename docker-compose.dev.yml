@@ -1,4 +1,35 @@
+version: '3.7'
+
 services:
+  printscript-ui:
+    container_name: 'printscript-ui'
+    image: 'ghcr.io/ingsis-team/ingsis-printscript-ui:latest'
+    pull_policy: always
+    expose:
+      - "80"
+
+  snippet-api:
+    container_name: 'snippet-api'
+    image: 'ghcr.io/ingsis-team/ingsis-snippet-service:latest'
+    pull_policy: always
+    expose:
+      - "8089"
+    depends_on:
+      - snippet-db
+    environment:
+      DB_HOST: snippet-db
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      PERMISSION_URL: ${PERMISSION_URL}
+      ASSET_URL: ${ASSET_URL}
+      PRINTSCRIPT_URL: ${PRINTSCRIPT_URL}
+      AUTH0_SERVER_URI: ${AUTH0_SERVER_URI}
+      AUTH0_CLIENT_ID: ${AUTH0_CLIENT_ID}
+      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      AUTH0_CLIENT_SECRET: ${AUTH0_CLIENT_SECRET}
+
   snippet-db:
     container_name: 'snippet-db'
     image: postgres:alpine
@@ -36,20 +67,7 @@ services:
     depends_on:
       - permission-db
 
-  snippet-api:
-    container_name: 'snippet-api'
-    image: 'ghcr.io/ingsis-team/ingsis-snippet-service:latest'
-    environment:
-      DB_USER: ${POSTGRES_SNIPPET_USER}
-      DB_PASSWORD: ${POSTGRES_SNIPPET_PASSWORD}
-      DB_NAME: ${POSTGRES_SNIPPET_DB}
-      DB_HOST: snippet-db
-      DB_PORT: ${DB_SNIPPET_PORT}
-      PRINTSCRIPT_URL: ${PRINTSCRIPT_URL}
-    depends_on:
-      - snippet-db
-
-  proxy:
+  reverse-proxy:
     container_name: 'reverse-proxy-dev'
     image: nginx:latest
     restart: unless-stopped
@@ -62,6 +80,7 @@ services:
     depends_on:
       - snippet-api
       - permission-api
+      - printscript-ui
 
 volumes:
   snippet_volume:
