@@ -67,6 +67,32 @@ services:
     depends_on:
       - permission-db
 
+  printscript-api:
+    container_name: 'printscript-api'
+    image: 'ghcr.io/ingsis-team/ingsis-printscript-service:latest'
+    pull_policy: always
+    depends_on:
+      - printscript-db
+      - redis
+
+  printscript-db:
+    container_name: 'printscript-db'
+    image: postgres:15
+    environment:
+      POSTGRES_USER: ${POSTGRES_PRINTSCRIPT_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PRINTSCRIPT_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_PRINTSCRIPT_DB}
+
+  redis:
+    container_name: 'redis'
+    image: redis:6-alpine
+
+  api-manager:
+    container_name: "asset-service"
+    image: "ghcr.io/austral-ingsis/snippet-asset-service:latest"
+    environment:
+      AZURE_HOST: "http://azurite"
+
   reverse-proxy:
     container_name: 'reverse-proxy-dev'
     image: nginx:latest
@@ -81,6 +107,31 @@ services:
       - snippet-api
       - permission-api
       - printscript-ui
+#      - printscript-api
+      - api-manager
+      - snippet-db
+      - permission-db
+#      - printscript-db
+
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:version-d63af1c1
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=ingsis
+      - TOKEN=${DUCKDNS_TOKEN}
+    restart: unless-stopped
+
+  azurite-manager:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
+    hostname: azurite
+    restart: always
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - blob:/workspace
 
 volumes:
   snippet_volume:
